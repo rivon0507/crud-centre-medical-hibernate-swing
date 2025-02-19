@@ -5,6 +5,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import rivon0507.centremedical.model.Medecin;
+import rivon0507.centremedical.model.Patient;
+import rivon0507.centremedical.model.Visiter;
 
 /// A utility class that manages the hibernate session factory.
 /// The {@code boot()} method should be called before any session is opened, and the {@code shutdown()} before stopping
@@ -13,6 +16,9 @@ public class HibernateUtil {
     private static SessionFactory sessionFactory;
     private final static Class<?>[] ENTITIES = new Class[]{
             // Add the entity classes here
+            Patient.class,
+            Medecin.class,
+            Visiter.class,
     };
 
     /// Creates and initializes the session factory if it is closed or null

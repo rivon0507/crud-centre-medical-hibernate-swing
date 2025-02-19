@@ -1,0 +1,9 @@
+# suppress inspection "UnusedProperty" for whole file
+hibernate.connection.driver=org.mariadb.jdbc.Driver
+hibernate.show_sql=true
+hibernate.format_sql=true
+hibernate.highlight_sql=true
+hibernate.hbm2ddl.auto=update
+hibernate.connection.url=your_connection_url
+hibernate.connection.username=your_db_username
+hibernate.connection.password=your_db_password

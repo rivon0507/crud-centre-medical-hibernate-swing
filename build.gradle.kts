@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("io.freefair.lombok") version "8.12.1"
 }
 
 group = "com.github.rivon0507"
@@ -10,8 +11,19 @@ repositories {
 }
 
 dependencies {
+    implementation("jakarta.data:jakarta.data-api:1.0.1")
+    implementation("org.glassfish:jakarta.el:4.0.2")
+    implementation("org.hibernate.orm:hibernate-core:6.6.8.Final")
+    implementation("org.hibernate:hibernate-jpamodelgen:6.6.8.Final")
+    implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.5.2")
+    implementation("org.jetbrains:annotations:24.0.0")
+    implementation("ch.qos.logback:logback-classic:1.5.16")
+
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+
+    annotationProcessor("org.hibernate:hibernate-jpamodelgen:6.6.8.Final")
 }
 
 tasks.test {

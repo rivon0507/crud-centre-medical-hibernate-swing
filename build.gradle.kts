@@ -6,6 +6,9 @@ plugins {
 group = "com.github.rivon0507"
 version = "1.0-SNAPSHOT"
 
+val mockito = "org.mockito:mockito-core:5.15.2"
+val mockitoAgent = configurations.create("mockitoAgent")
+
 repositories {
     mavenCentral()
 }
@@ -22,10 +25,13 @@ dependencies {
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation(mockito)
+    mockitoAgent(mockito) { isTransitive = false }
 
     annotationProcessor("org.hibernate:hibernate-jpamodelgen:6.6.8.Final")
 }
 
 tasks.test {
     useJUnitPlatform()
+    jvmArgs("-javaagent:${mockitoAgent.asPath}")
 }

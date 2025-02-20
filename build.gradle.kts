@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("io.github.file5.guidesigner") version "1.0.2"
     id("io.freefair.lombok") version "8.12.1"
 }
 
@@ -22,6 +23,8 @@ dependencies {
     implementation("org.mariadb.jdbc:mariadb-java-client:3.5.2")
     implementation("org.jetbrains:annotations:24.0.0")
     implementation("ch.qos.logback:logback-classic:1.5.16")
+    implementation("com.intellij:forms_rt:7.0.3")
+    implementation("com.github.lgooddatepicker:LGoodDatePicker:11.2.1")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

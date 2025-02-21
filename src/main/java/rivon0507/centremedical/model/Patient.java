@@ -3,6 +3,8 @@ package rivon0507.centremedical.model;
 import jakarta.persistence.*;
 import lombok.*;
 import rivon0507.centremedical.enums.Sexe;
+
+import java.util.Objects;
 import java.util.Optional;
 
 @Entity @Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
@@ -21,5 +23,10 @@ public class Patient {
         return nom + Optional.ofNullable(prenom)
                 .map(s -> " " + s)
                 .orElse("");
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Patient && Objects.equals(codepat, ((Patient) obj).codepat);
     }
 }

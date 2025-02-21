@@ -1,7 +1,6 @@
 package rivon0507.centremedical.view.dialog;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.jetbrains.annotations.Nullable;
 import rivon0507.centremedical.model.Medecin;
 
 import javax.swing.*;
@@ -9,21 +8,23 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.function.Consumer;
 
-public class MedecinDialog extends JDialog {
+public class MedecinDialog extends EntityFormDialog<Medecin> {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JTextField nomField;
     private JTextField prenomField;
     private JTextField gradeTextField;
-    @Getter @Setter private Consumer<Medecin> addMedecinListener;
 
     public MedecinDialog(Component parent) {
+        this(parent, null);
+    }
+
+    public MedecinDialog(Component parent, @Nullable Medecin medecin) {
+        super(parent, Medecin.class, medecin);
         setContentPane(contentPane);
         setModal(true);
-        setLocationRelativeTo(parent);
         getRootPane().setDefaultButton(buttonOK);
         buttonOK.addActionListener(this::onOK);
         buttonCancel.addActionListener(this::onCancel);
@@ -39,6 +40,9 @@ public class MedecinDialog extends JDialog {
         contentPane.registerKeyboardAction(this::onCancel, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
         );
+        nomField.setText(getEntity().getNom());
+        prenomField.setText(getEntity().getPrenom());
+        gradeTextField.setText(getEntity().getGrade());
     }
 
     private void onCancel(AWTEvent e) {
@@ -55,8 +59,8 @@ public class MedecinDialog extends JDialog {
         if (nom.isBlank() || grade.isBlank()) {
             JOptionPane.showMessageDialog(this, message, "Erreur", JOptionPane.WARNING_MESSAGE);
         } else {
-            if (addMedecinListener != null) {
-                addMedecinListener.accept(Medecin.builder().nom(nom).prenom(prenom).grade(grade).build());
+            if (getOkListener() != null) {
+                getOkListener().accept(Medecin.builder().nom(nom).prenom(prenom).grade(grade).build());
             }
             dispose();
         }

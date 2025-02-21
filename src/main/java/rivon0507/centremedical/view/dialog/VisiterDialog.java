@@ -1,8 +1,7 @@
 package rivon0507.centremedical.view.dialog;
 
 import com.github.lgooddatepicker.components.DatePicker;
-import lombok.Getter;
-import lombok.Setter;
+import org.jetbrains.annotations.Nullable;
 import rivon0507.centremedical.model.Medecin;
 import rivon0507.centremedical.model.Patient;
 import rivon0507.centremedical.model.Visiter;
@@ -15,24 +14,20 @@ import java.awt.event.WindowEvent;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Vector;
-import java.util.function.Consumer;
 
-public class VisiterDialog extends JDialog {
+public class VisiterDialog extends EntityFormDialog<Visiter> {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JComboBox<Patient> patientComboBox;
     private JComboBox<Medecin> medecinComboBox;
     private DatePicker datePicker;
-    @Getter
-    @Setter
-    private Consumer<Visiter> addVisiterListener;
 
-    public VisiterDialog(List<Medecin> medecins, List<Patient> patients, Component parent) {
+    public VisiterDialog(List<Medecin> medecins, List<Patient> patients, Component parent, @Nullable Visiter visiter) {
+        super(parent, Visiter.class, visiter);
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        setLocationRelativeTo(parent);
         buttonOK.addActionListener(this::onOK);
         buttonCancel.addActionListener(this::onCancel);
         // call onCancel() when cross is clicked
@@ -67,6 +62,13 @@ public class VisiterDialog extends JDialog {
                 return this;
             }
         });
+        datePicker.setDate(getEntity().getDate());
+        patientComboBox.setSelectedItem(getEntity().getPatient());
+        medecinComboBox.setSelectedItem(getEntity().getMedecin());
+    }
+
+    public VisiterDialog(List<Medecin> medecins, List<Patient> patients, Component parent) {
+        this(medecins, patients, parent, null);
     }
 
     private void onOK(AWTEvent e) {
@@ -80,8 +82,8 @@ public class VisiterDialog extends JDialog {
         if (medecin == null || patient == null || date == null) {
             JOptionPane.showMessageDialog(this, message, "Erreur", JOptionPane.WARNING_MESSAGE);
         } else {
-            if (addVisiterListener != null) {
-                addVisiterListener.accept(Visiter.builder().medecin(medecin).patient(patient).date(date).build());
+            if (getOkListener() != null) {
+                getOkListener().accept(Visiter.builder().medecin(medecin).patient(patient).date(date).build());
             }
             dispose();
         }

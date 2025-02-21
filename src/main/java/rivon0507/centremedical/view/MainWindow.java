@@ -1,6 +1,9 @@
 package rivon0507.centremedical.view;
 
 import lombok.extern.slf4j.Slf4j;
+import rivon0507.centremedical.model.Medecin;
+import rivon0507.centremedical.model.Patient;
+import rivon0507.centremedical.model.Visiter;
 import rivon0507.centremedical.repository.MedecinRepository;
 import rivon0507.centremedical.repository.PatientRepository;
 import rivon0507.centremedical.repository.VisiterRepository;
@@ -72,7 +75,7 @@ public class MainWindow extends JFrame {
 
     private void onAddVisiteButtonClicked(ActionEvent e) {
         VisiterDialog dialog = new VisiterDialog(medecinRepository.findAll(), patientRepository.findAll(), this);
-        dialog.setAddVisiterListener(visiter -> {
+        dialog.setOkListener(visiter -> {
             visiterRepository.save(visiter);
             ((VisiterTableModel) visiterTable.getModel()).setData(visiterRepository.findAll());
         });
@@ -81,7 +84,7 @@ public class MainWindow extends JFrame {
 
     private void onAddPatientButtonClicked(ActionEvent e) {
         PatientDialog dialog = new PatientDialog(this);
-        dialog.setAddPatientListener(patient -> {
+        dialog.setOkListener(patient -> {
             patientRepository.save(patient);
             ((PatientTableModel) patientTable.getModel()).setData(patientRepository.findAll());
         });
@@ -90,7 +93,7 @@ public class MainWindow extends JFrame {
 
     private void onAddMedecinButtonClicked(ActionEvent e) {
         MedecinDialog dialog = new MedecinDialog(this);
-        dialog.setAddMedecinListener(medecin -> {
+        dialog.setOkListener(medecin -> {
             medecinRepository.save(medecin);
             ((MedecinTableModel) medecinTable.getModel()).setData(medecinRepository.findAll());
         });
@@ -115,8 +118,16 @@ public class MainWindow extends JFrame {
     }
 
     private void onModifierVisiter(ActionEvent e) {
-        // TODO
-        log.info("Modifier visiter");
+        int selected = visiterTable.convertRowIndexToModel(visiterTable.getSelectedRow());
+        if (selected == -1) return;
+        Visiter old = ((VisiterTableModel) visiterTable.getModel()).getEntityAt(selected);
+        VisiterDialog dialog = new VisiterDialog(medecinRepository.findAll(), patientRepository.findAll(), this, old);
+        dialog.setOkListener(visiter -> {
+            visiter.setId(old.getId());
+            visiterRepository.update(visiter);
+            ((VisiterTableModel) visiterTable.getModel()).setData(visiterRepository.findAll());
+        });
+        dialog.setVisible(true);
     }
 
     private void onSupprimerPatient(ActionEvent e) {
@@ -125,8 +136,16 @@ public class MainWindow extends JFrame {
     }
 
     private void onModifierPatient(ActionEvent e) {
-        // TODO
-        log.info("Modifier patient selected");
+        int selected = patientTable.convertRowIndexToModel(patientTable.getSelectedRow());
+        if (selected == -1) return;
+        Patient old = ((PatientTableModel) patientTable.getModel()).getEntityAt(selected);
+        PatientDialog dialog = new PatientDialog(this, old);
+        dialog.setOkListener(patient -> {
+            patient.setCodepat(old.getCodepat());
+            patientRepository.update(patient);
+            ((PatientTableModel) patientTable.getModel()).setData(patientRepository.findAll());
+        });
+        dialog.setVisible(true);
     }
 
     private void onSupprimerMedecin(ActionEvent e) {
@@ -135,7 +154,15 @@ public class MainWindow extends JFrame {
     }
 
     private void onModifierMedecin(ActionEvent e) {
-        // TODO
-        log.info("User clicked on modifier medecin");
+        int selected = medecinTable.convertRowIndexToModel(medecinTable.getSelectedRow());
+        if (selected == -1) return;
+        Medecin old = ((MedecinTableModel) medecinTable.getModel()).getEntityAt(selected);
+        MedecinDialog dialog = new MedecinDialog(this, old);
+        dialog.setOkListener(medecin -> {
+            medecin.setId(old.getId());
+            medecinRepository.update(medecin);
+            ((MedecinTableModel) medecinTable.getModel()).setData(medecinRepository.findAll());
+        });
+        dialog.setVisible(true);
     }
 }

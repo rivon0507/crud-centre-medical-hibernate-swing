@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.*;
+
+import java.util.Objects;
 import java.util.Optional;
 
 @Entity @Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
@@ -21,5 +23,10 @@ public class Medecin {
         return nom + Optional.ofNullable(prenom)
                 .map(s -> " " + s)
                 .orElse("");
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Medecin && Objects.equals(id, ((Medecin) obj).id);
     }
 }

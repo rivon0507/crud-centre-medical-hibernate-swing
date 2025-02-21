@@ -1,7 +1,6 @@
 package rivon0507.centremedical.view.dialog;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.jetbrains.annotations.Nullable;
 import rivon0507.centremedical.enums.Sexe;
 import rivon0507.centremedical.model.Patient;
 
@@ -10,9 +9,8 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.function.Consumer;
 
-public class PatientDialog extends JDialog {
+public class PatientDialog extends EntityFormDialog<Patient> {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -21,19 +19,17 @@ public class PatientDialog extends JDialog {
     private JRadioButton masculinRadioButton;
     private JRadioButton femininRadioButton;
     private JTextField adresseField;
-    @Getter
-    @Setter
-    private Consumer<Patient> addPatientListener;
 
-    public PatientDialog(Component parent) {
+    public PatientDialog(Component parent, @Nullable Patient patient) {
+        super(parent, Patient.class, patient);
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        setLocationRelativeTo(parent);
         buttonOK.addActionListener(this::onOK);
         buttonCancel.addActionListener(this::onCancel);
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        pack();
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 onCancel(e);
@@ -41,7 +37,16 @@ public class PatientDialog extends JDialog {
         });
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(this::onCancel, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        pack();
+        nomField.setText(getEntity().getNom());
+        prenomField.setText(getEntity().getPrenom());
+        adresseField.setText(getEntity().getAdresse());
+        if (getEntity().getSexe() == Sexe.FEMININ) {
+            femininRadioButton.setSelected(true);
+        }
+    }
+
+    public PatientDialog(Component parent) {
+        this(parent, null);
     }
 
     private void onOK(AWTEvent e) {
@@ -54,8 +59,8 @@ public class PatientDialog extends JDialog {
         if (nom.isBlank()) {
             JOptionPane.showMessageDialog(this, message, "Erreur", JOptionPane.WARNING_MESSAGE);
         } else {
-            if (addPatientListener != null) {
-                addPatientListener.accept(Patient.builder().nom(nom).prenom(prenom).adresse(adresse).sexe(sexe).build());
+            if (getOkListener() != null) {
+                getOkListener().accept(Patient.builder().nom(nom).prenom(prenom).adresse(adresse).sexe(sexe).build());
             }
             dispose();
         }

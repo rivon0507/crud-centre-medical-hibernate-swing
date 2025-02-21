@@ -11,9 +11,9 @@ public class Visiter {
 
     @Column private LocalDate date;
 
-    @ManyToOne(targetEntity = Medecin.class, optional = false)
+    @ManyToOne(targetEntity = Medecin.class, optional = false, cascade = CascadeType.ALL)
     private Medecin medecin;
 
-    @ManyToOne(targetEntity = Patient.class, optional = false)
+    @ManyToOne(targetEntity = Patient.class, optional = false, cascade = CascadeType.ALL)
     private Patient patient;
 }

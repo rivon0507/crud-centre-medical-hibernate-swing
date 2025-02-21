@@ -35,7 +35,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Run Gradle checks
-        run: ./gradlew check --continue
+        run: ./gradlew check --continue --dependency "com.h2database:h2:2.2.224"
 
       - name: Upload test results
         uses: actions/upload-artifact@v4

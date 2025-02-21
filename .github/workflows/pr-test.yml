@@ -13,6 +13,16 @@ jobs:
         with:
           java-version: '22'
           distribution: 'temurin'
+          
+      - name: Create `hibernate.properties`
+        run: |
+          mkdir -p src/test/resources
+          echo "hibernate.connection.driver_class=org.h2.Driver" > src/test/resources/hibernate.properties
+          echo "hibernate.connection.url=jdbc:h2:mem:testdb" >> src/test/resources/hibernate.properties
+          echo "hibernate.connection.username=sa" >> src/test/resources/hibernate.properties
+          echo "hibernate.connection.password=" >> src/test/resources/hibernate.properties
+          echo "hibernate.dialect=org.hibernate.dialect.H2Dialect" >> src/test/resources/hibernate.properties
+          echo "hibernate.hbm2ddl.auto=update" >> src/test/resources/hibernate.properties
 
       - name: Cache Gradle packages
         uses: actions/cache@v4

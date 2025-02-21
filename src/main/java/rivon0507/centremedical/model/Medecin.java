@@ -1,11 +1,9 @@
 package rivon0507.centremedical.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -18,6 +16,9 @@ public class Medecin {
     @Column(length = 50) private String prenom;
 
     @Column(length = 10) private String grade;
+
+    @OneToMany(targetEntity = Visiter.class, mappedBy = "medecin", cascade = CascadeType.REMOVE)
+    private List<Visiter> visiters;
 
     public String getNomEtPrenom() {
         return nom + Optional.ofNullable(prenom)

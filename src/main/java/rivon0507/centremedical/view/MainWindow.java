@@ -21,6 +21,7 @@ import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Slf4j
 public class MainWindow extends JFrame {
@@ -103,9 +104,15 @@ public class MainWindow extends JFrame {
     private void onTabChange(ChangeEvent e) {
         List<JButton> buttons = List.of(addMedecinButton, addPatientButton, addVisiterButton);
         List<JPanel> panels = List.of(medecinPanel, patientPanel, visiterPanel);
+        List<Consumer<?>> tableUpdateFunctions = List.of(
+                _ -> ((MedecinTableModel) medecinTable.getModel()).setData(medecinRepository.findAll()),
+                _ -> ((PatientTableModel) patientTable.getModel()).setData(patientRepository.findAll()),
+                _ -> ((VisiterTableModel) visiterTable.getModel()).setData(visiterRepository.findAll())
+        );
         for (int i = 0; i < 3; i++) {
             if (tabbedPane.getSelectedComponent() == panels.get(i)) {
                 buttons.get(i).setMnemonic('A');
+                tableUpdateFunctions.get(i).accept(null);
             } else {
                 buttons.get(i).setMnemonic('\0');
             }
@@ -113,8 +120,11 @@ public class MainWindow extends JFrame {
     }
 
     private void onSupprimerVisiter(ActionEvent e) {
-        // TODO
-        log.info("Supprimer visiter selected");
+        int selected = visiterTable.convertRowIndexToModel(visiterTable.getSelectedRow());
+        if (selected == -1) return;
+        Visiter visiter = ((VisiterTableModel) visiterTable.getModel()).getEntityAt(selected);
+        visiterRepository.delete(visiter);
+        ((VisiterTableModel) visiterTable.getModel()).setData(visiterRepository.findAll());
     }
 
     private void onModifierVisiter(ActionEvent e) {
@@ -131,8 +141,11 @@ public class MainWindow extends JFrame {
     }
 
     private void onSupprimerPatient(ActionEvent e) {
-        // TODO
-        log.info("Supprimer patient");
+        int selected = patientTable.convertRowIndexToModel(patientTable.getSelectedRow());
+        if (selected == -1) return;
+        Patient patient = ((PatientTableModel) patientTable.getModel()).getEntityAt(selected);
+        patientRepository.delete(patient);
+        ((PatientTableModel) patientTable.getModel()).setData(patientRepository.findAll());
     }
 
     private void onModifierPatient(ActionEvent e) {
@@ -149,8 +162,11 @@ public class MainWindow extends JFrame {
     }
 
     private void onSupprimerMedecin(ActionEvent e) {
-        // TODO
-        log.info("Supprimer medecin");
+        int selected = medecinTable.convertRowIndexToModel(medecinTable.getSelectedRow());
+        if (selected == -1) return;
+        Medecin medecin = ((MedecinTableModel) medecinTable.getModel()).getEntityAt(selected);
+        medecinRepository.delete(medecin);
+        ((MedecinTableModel) medecinTable.getModel()).setData(medecinRepository.findAll());
     }
 
     private void onModifierMedecin(ActionEvent e) {

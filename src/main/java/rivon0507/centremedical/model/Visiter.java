@@ -12,10 +12,10 @@ public class Visiter {
 
     @Column private LocalDate date;
 
-    @ManyToOne(targetEntity = Medecin.class, optional = false, cascade = CascadeType.REMOVE)
+    @ManyToOne(targetEntity = Medecin.class, optional = false)
     private Medecin medecin;
 
-    @ManyToOne(targetEntity = Patient.class, optional = false, cascade = CascadeType.REMOVE)
+    @ManyToOne(targetEntity = Patient.class, optional = false)
     private Patient patient;
 
     @Override

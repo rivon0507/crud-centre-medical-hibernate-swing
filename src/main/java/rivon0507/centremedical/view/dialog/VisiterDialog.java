@@ -32,7 +32,6 @@ public class VisiterDialog extends EntityFormDialog<Visiter> {
         buttonCancel.addActionListener(this::onCancel);
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        pack();
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 onCancel(e);
@@ -65,6 +64,7 @@ public class VisiterDialog extends EntityFormDialog<Visiter> {
         datePicker.setDate(getEntity().getDate());
         patientComboBox.setSelectedItem(getEntity().getPatient());
         medecinComboBox.setSelectedItem(getEntity().getMedecin());
+        pack();
     }
 
     public VisiterDialog(List<Medecin> medecins, List<Patient> patients, Component parent) {

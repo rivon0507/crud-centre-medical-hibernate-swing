@@ -22,10 +22,12 @@ dependencies {
     implementation("org.mariadb.jdbc:mariadb-java-client:3.5.2")
     implementation("org.jetbrains:annotations:24.0.0")
     implementation("ch.qos.logback:logback-classic:1.5.16")
+    implementation("org.h2database
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation(mockito)
+    testImplementation("com.h2database:h2:2.3.232")
     mockitoAgent(mockito) { isTransitive = false }
 
     annotationProcessor("org.hibernate:hibernate-jpamodelgen:6.6.8.Final")

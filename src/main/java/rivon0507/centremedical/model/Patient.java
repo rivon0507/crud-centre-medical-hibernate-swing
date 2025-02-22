@@ -20,7 +20,7 @@ public class Patient {
 
     @Column(length = 30) private String adresse;
 
-    @OneToMany(targetEntity = Visiter.class, mappedBy = "patient", cascade = CascadeType.REMOVE)
+    @OneToMany(targetEntity = Visiter.class, mappedBy = "patient", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private List<Visiter> visiters;
 
     public String getNomEtPrenom() {

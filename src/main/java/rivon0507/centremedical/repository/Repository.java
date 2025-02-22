@@ -13,30 +13,30 @@ public class Repository<T> {
         this.entityClass = entityClass;
     }
 
-    public void save(T patient) {
+    public void save(T entity) {
         try (Session session = HibernateUtil.openSession()) {
             session.beginTransaction();
-            session.persist(patient);
+            session.persist(entity);
             session.getTransaction().commit();
         }
     }
-    
-    public void update(T patient) {
+
+    public void update(T entity) {
         try (Session session = HibernateUtil.openSession()) {
             session.beginTransaction();
-            session.merge(patient);
+            session.merge(entity);
             session.getTransaction().commit();
         }
     }
-    
-    public void delete(T patient) {
+
+    public void delete(T entity) {
         try (Session session = HibernateUtil.openSession()) {
             session.beginTransaction();
-            session.remove(patient);
+            session.remove(entity);
             session.getTransaction().commit();
         }
     }
-    
+
     public Optional<T> findById(Long id) {
         try (Session session = HibernateUtil.openSession()) {
             return Optional.ofNullable(session.get(entityClass, id));

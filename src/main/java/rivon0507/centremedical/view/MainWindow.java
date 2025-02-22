@@ -78,7 +78,7 @@ public class MainWindow extends JFrame {
         VisiterDialog dialog = new VisiterDialog(medecinRepository.findAll(), patientRepository.findAll(), this);
         dialog.setOkListener(visiter -> {
             visiterRepository.save(visiter);
-            ((VisiterTableModel) visiterTable.getModel()).setData(visiterRepository.findAll());
+            refreshVisiterTable();
         });
         dialog.setVisible(true);
     }
@@ -87,7 +87,7 @@ public class MainWindow extends JFrame {
         PatientDialog dialog = new PatientDialog(this);
         dialog.setOkListener(patient -> {
             patientRepository.save(patient);
-            ((PatientTableModel) patientTable.getModel()).setData(patientRepository.findAll());
+            refreshPatientTable();
         });
         dialog.setVisible(true);
     }
@@ -96,7 +96,7 @@ public class MainWindow extends JFrame {
         MedecinDialog dialog = new MedecinDialog(this);
         dialog.setOkListener(medecin -> {
             medecinRepository.save(medecin);
-            ((MedecinTableModel) medecinTable.getModel()).setData(medecinRepository.findAll());
+            refreshMedecinTable();
         });
         dialog.setVisible(true);
     }
@@ -123,8 +123,11 @@ public class MainWindow extends JFrame {
         int selected = visiterTable.convertRowIndexToModel(visiterTable.getSelectedRow());
         if (selected == -1) return;
         Visiter visiter = ((VisiterTableModel) visiterTable.getModel()).getEntityAt(selected);
-        visiterRepository.delete(visiter);
-        ((VisiterTableModel) visiterTable.getModel()).setData(visiterRepository.findAll());
+        String message = "Voulez-vous vraiment supprimer cette visite ?";
+        if (JOptionPane.showConfirmDialog(this, message, "Suppression", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            visiterRepository.delete(visiter);
+        }
+        refreshVisiterTable();
     }
 
     private void onModifierVisiter(ActionEvent e) {
@@ -135,17 +138,25 @@ public class MainWindow extends JFrame {
         dialog.setOkListener(visiter -> {
             visiter.setId(old.getId());
             visiterRepository.update(visiter);
-            ((VisiterTableModel) visiterTable.getModel()).setData(visiterRepository.findAll());
+            refreshVisiterTable();
         });
         dialog.setVisible(true);
+    }
+
+    private void refreshVisiterTable() {
+        ((VisiterTableModel) visiterTable.getModel()).setData(visiterRepository.findAll());
     }
 
     private void onSupprimerPatient(ActionEvent e) {
         int selected = patientTable.convertRowIndexToModel(patientTable.getSelectedRow());
         if (selected == -1) return;
         Patient patient = ((PatientTableModel) patientTable.getModel()).getEntityAt(selected);
-        patientRepository.delete(patient);
-        ((PatientTableModel) patientTable.getModel()).setData(patientRepository.findAll());
+        String message = "Voulez-vous vraiment supprimer ce patient ?";
+        message += !patient.getVisiters().isEmpty() ? "\n Ce patient a des visites associés. Ces visites seront également supprimées." : "";
+        if (JOptionPane.showConfirmDialog(this, message, "Suppression", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            patientRepository.delete(patient);
+        }
+        refreshPatientTable();
     }
 
     private void onModifierPatient(ActionEvent e) {
@@ -156,16 +167,28 @@ public class MainWindow extends JFrame {
         dialog.setOkListener(patient -> {
             patient.setCodepat(old.getCodepat());
             patientRepository.update(patient);
-            ((PatientTableModel) patientTable.getModel()).setData(patientRepository.findAll());
+            refreshPatientTable();
         });
         dialog.setVisible(true);
+    }
+
+    private void refreshPatientTable() {
+        ((PatientTableModel) patientTable.getModel()).setData(patientRepository.findAll());
     }
 
     private void onSupprimerMedecin(ActionEvent e) {
         int selected = medecinTable.convertRowIndexToModel(medecinTable.getSelectedRow());
         if (selected == -1) return;
         Medecin medecin = ((MedecinTableModel) medecinTable.getModel()).getEntityAt(selected);
-        medecinRepository.delete(medecin);
+        String message = "Voulez-vous vraiment supprimer ce médecin ?";
+        message += !medecin.getVisiters().isEmpty() ? "\n Ce médecin a des visites associés. Ces visites seront également supprimées." : "";
+        if (JOptionPane.showConfirmDialog(this, message, "Suppression", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            medecinRepository.delete(medecin);
+        }
+        refreshMedecinTable();
+    }
+
+    private void refreshMedecinTable() {
         ((MedecinTableModel) medecinTable.getModel()).setData(medecinRepository.findAll());
     }
 
@@ -177,7 +200,7 @@ public class MainWindow extends JFrame {
         dialog.setOkListener(medecin -> {
             medecin.setId(old.getId());
             medecinRepository.update(medecin);
-            ((MedecinTableModel) medecinTable.getModel()).setData(medecinRepository.findAll());
+            refreshMedecinTable();
         });
         dialog.setVisible(true);
     }

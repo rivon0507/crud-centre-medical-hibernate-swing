@@ -22,7 +22,6 @@ dependencies {
     implementation("org.mariadb.jdbc:mariadb-java-client:3.5.2")
     implementation("org.jetbrains:annotations:24.0.0")
     implementation("ch.qos.logback:logback-classic:1.5.16")
-    implementation("org.h2database
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

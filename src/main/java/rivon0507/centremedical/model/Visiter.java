@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity @Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
 public class Visiter {
@@ -16,4 +17,9 @@ public class Visiter {
 
     @ManyToOne(targetEntity = Patient.class, optional = false)
     private Patient patient;
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Visiter && Objects.equals(id, ((Visiter) obj).id);
+    }
 }

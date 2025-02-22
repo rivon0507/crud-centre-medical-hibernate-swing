@@ -17,7 +17,7 @@ public class Medecin {
 
     @Column(length = 10) private String grade;
 
-    @OneToMany(targetEntity = Visiter.class, mappedBy = "medecin", cascade = CascadeType.REMOVE)
+    @OneToMany(targetEntity = Visiter.class, mappedBy = "medecin", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private List<Visiter> visiters;
 
     public String getNomEtPrenom() {

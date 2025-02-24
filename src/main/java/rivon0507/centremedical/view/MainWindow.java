@@ -1,6 +1,7 @@
 package rivon0507.centremedical.view;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import rivon0507.centremedical.model.Medecin;
 import rivon0507.centremedical.model.Patient;
 import rivon0507.centremedical.model.Visiter;
@@ -18,9 +19,15 @@ import rivon0507.centremedical.view.tablemodel.VisiterTableModel;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 @Slf4j
@@ -39,6 +46,8 @@ public class MainWindow extends JFrame {
     private JButton addMedecinButton;
     private JButton addPatientButton;
     private JButton addVisiterButton;
+    private JTextField patientSearchField;
+    private JComboBox<String> patientSearchComboBox;
 
     public MainWindow() throws HeadlessException {
         setTitle("Centre Medical");
@@ -50,7 +59,9 @@ public class MainWindow extends JFrame {
         addMedecinButton.addActionListener(this::onAddMedecinButtonClicked);
         addPatientButton.addActionListener(this::onAddPatientButtonClicked);
         addVisiterButton.addActionListener(this::onAddVisiteButtonClicked);
+        patientSearchComboBox.addItemListener(this::patientSearchComboBoxItemStateChanged);
         setUpTables();
+        patientSearchField.addActionListener(this::onPatientSearchFieldSearch);
     }
 
     private void setUpTables() {
@@ -106,7 +117,10 @@ public class MainWindow extends JFrame {
         List<JPanel> panels = List.of(medecinPanel, patientPanel, visiterPanel);
         List<Consumer<?>> tableUpdateFunctions = List.of(
                 _ -> ((MedecinTableModel) medecinTable.getModel()).setData(medecinRepository.findAll()),
-                _ -> ((PatientTableModel) patientTable.getModel()).setData(patientRepository.findAll()),
+                _ -> {
+                    ((PatientTableModel) patientTable.getModel()).setData(patientRepository.findAll());
+                    patientSearchField.setText("");
+                },
                 _ -> ((VisiterTableModel) visiterTable.getModel()).setData(visiterRepository.findAll())
         );
         for (int i = 0; i < 3; i++) {
@@ -203,5 +217,42 @@ public class MainWindow extends JFrame {
             refreshMedecinTable();
         });
         dialog.setVisible(true);
+    }
+
+    private void patientSearchComboBoxItemStateChanged(@NotNull ItemEvent e) {
+        if (e.getStateChange() == ItemEvent.SELECTED) {
+            patientSearchField.setToolTipText(e.getItem().toString() + " du patient");
+            ((AbstractDocument) patientSearchField.getDocument()).setDocumentFilter(
+                    "Code".equals(e.getItem().toString()) ? new NumericDocumentFilter() : new DocumentFilter()
+            );
+            patientSearchField.setText("");
+            patientSearchField.grabFocus();
+        }
+    }
+
+    private void onPatientSearchFieldSearch(ActionEvent e) {
+        List<Patient> searchResult;
+        if (Objects.equals(Objects.requireNonNull(patientSearchComboBox.getSelectedItem()).toString(), "Nom"))
+            searchResult = patientRepository.findByNom(patientSearchField.getText());
+        else searchResult = patientRepository.findById(Long.parseLong(patientSearchField.getText())).stream().toList();
+        ((PatientTableModel) patientTable.getModel()).setData(searchResult);
+    }
+
+    private static class NumericDocumentFilter extends DocumentFilter {
+        private static final String REGEX = "\\d*";
+
+        @Override
+        public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+            if (string != null && string.matches(REGEX)) {
+                super.insertString(fb, offset, string, attr);
+            }
+        }
+
+        @Override
+        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+            if (text != null && text.matches(REGEX)) {
+                super.replace(fb, offset, length, text, attrs);
+            }
+        }
     }
 }
